@@ -1,10 +1,10 @@
 export class CreateDTO {
   title: string;
-  isComplited?: boolean;
+  isCompleted?: boolean;
 }
 
 export class UpdateDTO {
   id: string;
   title: string;
-  isComplited?: boolean;
+  isCompleted?: boolean;
 }

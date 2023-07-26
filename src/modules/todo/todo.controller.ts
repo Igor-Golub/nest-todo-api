@@ -10,8 +10,9 @@ import {
 import { TodoService } from './todo.service';
 import { Todo } from './entities/todo.entity';
 import { CreateDTO, UpdateDTO } from './entities/dto';
+import { APIRouts } from '../../shared/enums';
 
-@Controller('api/todo')
+@Controller(APIRouts.Todo)
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
@@ -26,18 +27,19 @@ export class TodoController {
   }
 
   @Post()
-  createTodo(@Body() { title, isComplited = false }: CreateDTO): Promise<Todo> {
+  createTodo(@Body() todo: CreateDTO): Promise<Todo> {
+    console.log(todo);
     const newTodo = new Todo();
 
-    newTodo.title = title;
-    newTodo.isComplited = isComplited;
+    newTodo.title = todo.title;
+    newTodo.isCompleted = todo.isCompleted;
 
     return this.todoService.create(newTodo);
   }
 
   @Put()
   updateTodo(
-    @Body() { id, title, isComplited = false }: UpdateDTO,
+    @Body() { id, title, isCompleted = false }: UpdateDTO,
   ): Promise<Todo> {
     const findedTodo = this.todoService.findById({ id });
 
@@ -46,7 +48,7 @@ export class TodoController {
     const newTodo = new Todo();
 
     newTodo.title = title;
-    newTodo.isComplited = isComplited;
+    newTodo.isCompleted = isCompleted;
 
     return this.todoService.update(newTodo);
   }
