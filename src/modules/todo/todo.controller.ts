@@ -28,29 +28,25 @@ export class TodoController {
 
   @Post()
   createTodo(@Body() todo: CreateDTO): Promise<Todo> {
-    console.log(todo);
-    const newTodo = new Todo();
-
-    newTodo.title = todo.title;
-    newTodo.isCompleted = todo.isCompleted;
-
-    return this.todoService.create(newTodo);
+    return this.todoService.create({
+      title: todo.title,
+      isCompleted: todo.isCompleted ?? false,
+    });
   }
 
   @Put()
-  updateTodo(
+  async updateTodo(
     @Body() { id, title, isCompleted = false }: UpdateDTO,
   ): Promise<Todo> {
-    const findedTodo = this.todoService.findById({ id });
+    const findTodo = await this.todoService.findById({ id });
 
-    if (!findedTodo) throw new Error('Todo didn`t find!');
+    if (!findTodo) throw new Error('Todo didn`t find!');
 
-    const newTodo = new Todo();
-
-    newTodo.title = title;
-    newTodo.isCompleted = isCompleted;
-
-    return this.todoService.update(newTodo);
+    return this.todoService.update({
+      id: findTodo.id,
+      title: title ?? findTodo.title,
+      isCompleted: isCompleted ?? findTodo.isCompleted,
+    });
   }
 
   @Delete(':id')
