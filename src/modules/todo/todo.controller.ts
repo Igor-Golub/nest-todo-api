@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   Param,
   Post,
   Put,
@@ -10,7 +11,7 @@ import {
 import { TodoService } from './todo.service';
 import { Todo } from './entities/todo.entity';
 import { CreateDTO, UpdateDTO } from './entities/dto';
-import { APIRouts } from '../../shared/enums';
+import { APIRouts, StatusCodes } from '../../shared/enums';
 
 @Controller(APIRouts.Todo)
 export class TodoController {
@@ -38,9 +39,13 @@ export class TodoController {
   async updateTodo(
     @Body() { id, title, isCompleted = false }: UpdateDTO,
   ): Promise<Todo> {
+    if (!id) throw new HttpException('Was not sent id', StatusCodes.BadRequest);
+
     const findTodo = await this.todoService.findById({ id });
 
-    if (!findTodo) throw new Error('Todo didn`t find!');
+    if (!findTodo) {
+      throw new HttpException('Todo did not find!', StatusCodes.BadRequest);
+    }
 
     return this.todoService.update({
       id: findTodo.id,
@@ -51,6 +56,8 @@ export class TodoController {
 
   @Delete(':id')
   deleteTodo(@Param('id') id: string): Promise<void> {
+    if (!id) throw new HttpException('Was not sent id', StatusCodes.BadRequest);
+
     return this.todoService.deleteById({ id });
   }
 }
